@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -49,7 +48,7 @@ const AIAssistant = () => {
     {
       id: 5,
       type: 'assistant',
-      content: "I've prepared a restock order. For last month's sales, antibiotics generated ₽15,420 in revenue, up 12% from the previous month. Amoxicillin was your top seller with 78 units sold.\n\nWould you like to see detailed sales analytics for antibiotics? I can prepare a report or you can check the Dashboard for a quick overview.",
+      content: "I've prepared a restock order. For last month's sales, antibiotics generated M15,420 in revenue, up 12% from the previous month. Amoxicillin was your top seller with 78 units sold.\n\nWould you like to see detailed sales analytics for antibiotics? I can prepare a report or you can check the Dashboard for a quick overview.",
       timestamp: new Date()
     }
   ]);
@@ -92,7 +91,7 @@ const AIAssistant = () => {
     }
     
     if (lowerInput.includes('sales') || lowerInput.includes('revenue')) {
-      return "Your current month's sales are performing well! Total revenue is ₽298,470 with a 16.8% growth rate. Top performers are Paracetamol (45 units) and Amoxicillin (38 units). Would you like a detailed breakdown?";
+      return "Your current month's sales are performing well! Total revenue is M298,470 with a 16.8% growth rate. Top performers are Paracetamol (45 units) and Amoxicillin (38 units). Would you like a detailed breakdown?";
     }
     
     if (lowerInput.includes('restock') || lowerInput.includes('order')) {

@@ -55,7 +55,7 @@ const SalesEntry = () => {
   const completeSale = () => {
     toast({
       title: "Sale completed!",
-      description: `Total: ₽${total.toFixed(2)} - Payment processed successfully`,
+      description: `Total: M${total.toFixed(2)} - Payment processed successfully`,
     });
     setCart([]);
   };
@@ -106,7 +106,7 @@ const SalesEntry = () => {
                       +
                     </Button>
                   </div>
-                  <span className="font-medium">₽{(item.price * item.quantity).toFixed(2)}</span>
+                  <span className="font-medium">M{(item.price * item.quantity).toFixed(2)}</span>
                 </div>
               </div>
             ))}
@@ -114,7 +114,7 @@ const SalesEntry = () => {
             <div className="border-t pt-4">
               <div className="flex justify-between text-lg font-bold">
                 <span>Total</span>
-                <span>₽{total.toFixed(2)}</span>
+                <span>M{total.toFixed(2)}</span>
               </div>
             </div>
 
@@ -161,7 +161,7 @@ const SalesEntry = () => {
                   </div>
                   <h3 className="font-medium text-sm">{product.name}</h3>
                   <p className="text-xs text-gray-500">{product.sku}</p>
-                  <p className="font-bold text-blue-600">₽{product.price.toFixed(2)}</p>
+                  <p className="font-bold text-blue-600">M{product.price.toFixed(2)}</p>
                   <Button size="sm" className="w-full mt-2 bg-blue-600 hover:bg-blue-700">
                     <Plus className="w-3 h-3 mr-1" />
                     Add

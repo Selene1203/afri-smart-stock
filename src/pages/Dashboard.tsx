@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -83,7 +82,7 @@ const Dashboard = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm font-medium text-gray-600">Monthly Sales</p>
-                <p className="text-2xl font-bold text-green-600">₽5,500</p>
+                <p className="text-2xl font-bold text-green-600">M5,500</p>
               </div>
               <TrendingUp className="w-8 h-8 text-green-600" />
             </div>
@@ -91,6 +90,7 @@ const Dashboard = () => {
         </Card>
       </div>
 
+      {/* Categories Distribution and Sales Trend */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
         {/* Categories Distribution */}
         <Card>

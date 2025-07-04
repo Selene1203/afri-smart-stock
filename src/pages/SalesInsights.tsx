@@ -1,4 +1,3 @@
-
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { TrendingUp, TrendingDown, DollarSign, Package } from "lucide-react";
@@ -14,11 +13,11 @@ const salesTrendData = [
 ];
 
 const topProducts = [
-  { name: "Paracetamol", sales: 45, value: "₽1,080" },
-  { name: "Amoxicillin", sales: 38, value: "₽1,349" },
-  { name: "Vitamin C", sales: 32, value: "₽600" },
-  { name: "Ibuprofen", sales: 28, value: "₽1,162" },
-  { name: "Cough Syrup", sales: 24, value: "₽720" },
+  { name: "Paracetamol", sales: 45, value: "M1,080" },
+  { name: "Amoxicillin", sales: 38, value: "M1,349" },
+  { name: "Vitamin C", sales: 32, value: "M600" },
+  { name: "Ibuprofen", sales: 28, value: "M1,162" },
+  { name: "Cough Syrup", sales: 24, value: "M720" },
 ];
 
 const categoryData = [
@@ -47,7 +46,7 @@ const SalesInsights = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Total Sales</p>
-                <p className="text-2xl font-bold">₽{currentMonth.sales.toLocaleString()}</p>
+                <p className="text-2xl font-bold">M{currentMonth.sales.toLocaleString()}</p>
                 <div className="flex items-center gap-1 mt-1">
                   <TrendingUp className="w-4 h-4 text-green-600" />
                   <span className="text-sm text-green-600">+{monthlyGrowth}%</span>
@@ -76,8 +75,8 @@ const SalesInsights = () => {
             <div className="flex items-center justify-between">
               <div>
                 <p className="text-sm text-gray-600">Daily Average</p>
-                <p className="text-2xl font-bold">₽{(currentMonth.sales / 30).toLocaleString()}</p>
-                <p className="text-sm text-gray-500">₽8,277</p>
+                <p className="text-2xl font-bold">M{(currentMonth.sales / 30).toLocaleString()}</p>
+                <p className="text-sm text-gray-500">M8,277</p>
               </div>
               <Package className="w-8 h-8 text-purple-600" />
             </div>
@@ -86,6 +85,7 @@ const SalesInsights = () => {
       </div>
 
       {/* Sales Trend Chart */}
+      
       <Card>
         <CardHeader>
           <CardTitle>Monthly Sales Trend</CardTitle>
@@ -167,6 +167,7 @@ const SalesInsights = () => {
         </Card>
 
         {/* Sales by Category */}
+        
         <Card>
           <CardHeader>
             <CardTitle>Sales by Category</CardTitle>
