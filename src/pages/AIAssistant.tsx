@@ -3,8 +3,9 @@ import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
-import { Send, Bot, User, Package, TrendingUp, ShoppingCart } from "lucide-react";
+import { Send, Bot, User, Package, TrendingUp, ShoppingCart, Settings } from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
+import { triggerMakeWebhook } from "@/utils/webhook";
 
 interface Message {
   id: number;
@@ -54,6 +55,9 @@ const AIAssistant = () => {
   ]);
   const [inputValue, setInputValue] = useState("");
   const [isTyping, setIsTyping] = useState(false);
+  const [webhookUrl, setWebhookUrl] = useState("dln86hzrhd5fft2nwsuvyuv5p0oygpi5@hook.eu2.make.com");
+  const [showWebhookSettings, setShowWebhookSettings] = useState(false);
+  const [isWebhookLoading, setIsWebhookLoading] = useState(false);
   const { toast } = useToast();
 
   const sendMessage = async (content: string) => {
@@ -70,6 +74,19 @@ const AIAssistant = () => {
     setInputValue("");
     setIsTyping(true);
 
+    // Trigger webhook for AI interactions
+    if (webhookUrl) {
+      try {
+        await triggerMakeWebhook(`https://${webhookUrl}`, {
+          event: "ai_interaction",
+          user_message: content,
+          user_id: "user_001", // Replace with actual user ID
+        });
+      } catch (error) {
+        console.error("Webhook trigger failed:", error);
+      }
+    }
+
     // Simulate AI response
     setTimeout(() => {
       const aiResponse: Message = {
@@ -81,6 +98,44 @@ const AIAssistant = () => {
       setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
     }, 1500);
+  };
+
+  const triggerWebhookManually = async () => {
+    if (!webhookUrl) {
+      toast({
+        title: "Error",
+        description: "Please enter your Make.com webhook URL",
+        variant: "destructive",
+      });
+      return;
+    }
+
+    setIsWebhookLoading(true);
+    try {
+      await triggerMakeWebhook(`https://${webhookUrl}`, {
+        event: "manual_trigger",
+        user_id: "user_001",
+        trigger_source: "ai_assistant",
+        data: {
+          current_inventory_items: 1247,
+          low_stock_items: 32,
+          out_of_stock_items: 8,
+        }
+      });
+
+      toast({
+        title: "Webhook Triggered",
+        description: "Your Make.com automation has been triggered successfully!",
+      });
+    } catch (error) {
+      toast({
+        title: "Error",
+        description: "Failed to trigger webhook. Please check your URL and try again.",
+        variant: "destructive",
+      });
+    } finally {
+      setIsWebhookLoading(false);
+    }
   };
 
   const generateAIResponse = (input: string): string => {
@@ -139,8 +194,46 @@ const AIAssistant = () => {
               {action.label}
             </Button>
           ))}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => setShowWebhookSettings(!showWebhookSettings)}
+            className="flex items-center gap-2"
+          >
+            <Settings className="w-4 h-4" />
+            Webhook
+          </Button>
         </div>
       </div>
+
+      {showWebhookSettings && (
+        <Card>
+          <CardHeader>
+            <CardTitle>Make.com Webhook Settings</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div>
+              <label className="block text-sm font-medium mb-2">Webhook URL</label>
+              <Input
+                value={webhookUrl}
+                onChange={(e) => setWebhookUrl(e.target.value)}
+                placeholder="your-webhook-id@hook.eu2.make.com"
+                className="mb-2"
+              />
+              <p className="text-xs text-gray-500">
+                Enter your Make.com webhook URL (without https://)
+              </p>
+            </div>
+            <Button
+              onClick={triggerWebhookManually}
+              disabled={isWebhookLoading}
+              className="bg-blue-600 hover:bg-blue-700"
+            >
+              {isWebhookLoading ? "Triggering..." : "Test Webhook"}
+            </Button>
+          </CardContent>
+        </Card>
+      )}
 
       <Card className="h-[600px] flex flex-col">
         <CardHeader className="pb-4">
