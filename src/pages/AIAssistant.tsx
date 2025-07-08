@@ -1,11 +1,13 @@
+
 import { useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
-import { Send, Bot, User, Package, TrendingUp, ShoppingCart, Settings } from "lucide-react";
-import { useToast } from "@/hooks/use-toast";
+import { Send, Bot } from "lucide-react";
 import { triggerMakeWebhook } from "@/utils/webhook";
+import WebhookSettings from "@/components/WebhookSettings";
+import QuickActions from "@/components/QuickActions";
+import MessageDisplay from "@/components/MessageDisplay";
 
 interface Message {
   id: number;
@@ -13,12 +15,6 @@ interface Message {
   content: string;
   timestamp: Date;
 }
-
-const quickActions = [
-  { icon: Package, label: "Inventory", action: "check inventory" },
-  { icon: TrendingUp, label: "Sales", action: "show sales" },
-  { icon: ShoppingCart, label: "Forecast", action: "forecast demand" },
-];
 
 const AIAssistant = () => {
   const [messages, setMessages] = useState<Message[]>([
@@ -57,8 +53,6 @@ const AIAssistant = () => {
   const [isTyping, setIsTyping] = useState(false);
   const [webhookUrl, setWebhookUrl] = useState("dln86hzrhd5fft2nwsuvyuv5p0oygpi5@hook.eu2.make.com");
   const [showWebhookSettings, setShowWebhookSettings] = useState(false);
-  const [isWebhookLoading, setIsWebhookLoading] = useState(false);
-  const { toast } = useToast();
 
   const sendMessage = async (content: string) => {
     if (!content.trim()) return;
@@ -98,44 +92,6 @@ const AIAssistant = () => {
       setMessages(prev => [...prev, aiResponse]);
       setIsTyping(false);
     }, 1500);
-  };
-
-  const triggerWebhookManually = async () => {
-    if (!webhookUrl) {
-      toast({
-        title: "Error",
-        description: "Please enter your Make.com webhook URL",
-        variant: "destructive",
-      });
-      return;
-    }
-
-    setIsWebhookLoading(true);
-    try {
-      await triggerMakeWebhook(`https://${webhookUrl}`, {
-        event: "manual_trigger",
-        user_id: "user_001",
-        trigger_source: "ai_assistant",
-        data: {
-          current_inventory_items: 1247,
-          low_stock_items: 32,
-          out_of_stock_items: 8,
-        }
-      });
-
-      toast({
-        title: "Webhook Triggered",
-        description: "Your Make.com automation has been triggered successfully!",
-      });
-    } catch (error) {
-      toast({
-        title: "Error",
-        description: "Failed to trigger webhook. Please check your URL and try again.",
-        variant: "destructive",
-      });
-    } finally {
-      setIsWebhookLoading(false);
-    }
   };
 
   const generateAIResponse = (input: string): string => {
@@ -181,59 +137,17 @@ const AIAssistant = () => {
             <span className="text-sm text-gray-600">Online</span>
           </div>
         </div>
-        <div className="flex gap-2">
-          {quickActions.map((action, index) => (
-            <Button
-              key={index}
-              variant="outline"
-              size="sm"
-              onClick={() => handleQuickAction(action.action)}
-              className="flex items-center gap-2"
-            >
-              <action.icon className="w-4 h-4" />
-              {action.label}
-            </Button>
-          ))}
-          <Button
-            variant="outline"
-            size="sm"
-            onClick={() => setShowWebhookSettings(!showWebhookSettings)}
-            className="flex items-center gap-2"
-          >
-            <Settings className="w-4 h-4" />
-            Webhook
-          </Button>
-        </div>
+        <QuickActions 
+          onQuickAction={handleQuickAction}
+          onToggleWebhookSettings={() => setShowWebhookSettings(!showWebhookSettings)}
+        />
       </div>
 
-      {showWebhookSettings && (
-        <Card>
-          <CardHeader>
-            <CardTitle>Make.com Webhook Settings</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div>
-              <label className="block text-sm font-medium mb-2">Webhook URL</label>
-              <Input
-                value={webhookUrl}
-                onChange={(e) => setWebhookUrl(e.target.value)}
-                placeholder="your-webhook-id@hook.eu2.make.com"
-                className="mb-2"
-              />
-              <p className="text-xs text-gray-500">
-                Enter your Make.com webhook URL (without https://)
-              </p>
-            </div>
-            <Button
-              onClick={triggerWebhookManually}
-              disabled={isWebhookLoading}
-              className="bg-blue-600 hover:bg-blue-700"
-            >
-              {isWebhookLoading ? "Triggering..." : "Test Webhook"}
-            </Button>
-          </CardContent>
-        </Card>
-      )}
+      <WebhookSettings
+        webhookUrl={webhookUrl}
+        setWebhookUrl={setWebhookUrl}
+        showWebhookSettings={showWebhookSettings}
+      />
 
       <Card className="h-[600px] flex flex-col">
         <CardHeader className="pb-4">
@@ -244,60 +158,7 @@ const AIAssistant = () => {
         </CardHeader>
         
         <CardContent className="flex-1 flex flex-col">
-          {/* Messages */}
-          <div className="flex-1 overflow-y-auto space-y-4 mb-4">
-            {messages.map((message) => (
-              <div
-                key={message.id}
-                className={`flex gap-3 ${message.type === 'user' ? 'justify-end' : 'justify-start'}`}
-              >
-                {message.type === 'assistant' && (
-                  <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                    <Bot className="w-4 h-4 text-blue-600" />
-                  </div>
-                )}
-                
-                <div
-                  className={`max-w-xs lg:max-w-md px-4 py-3 rounded-lg ${
-                    message.type === 'user'
-                      ? 'bg-blue-600 text-white'
-                      : 'bg-gray-100 text-gray-900'
-                  }`}
-                >
-                  <p className="text-sm">{message.content}</p>
-                  <p className={`text-xs mt-1 ${
-                    message.type === 'user' ? 'text-blue-100' : 'text-gray-500'
-                  }`}>
-                    {message.timestamp.toLocaleTimeString([], { 
-                      hour: '2-digit', 
-                      minute: '2-digit' 
-                    })}
-                  </p>
-                </div>
-
-                {message.type === 'user' && (
-                  <div className="w-8 h-8 bg-gray-100 rounded-full flex items-center justify-center">
-                    <User className="w-4 h-4 text-gray-600" />
-                  </div>
-                )}
-              </div>
-            ))}
-            
-            {isTyping && (
-              <div className="flex gap-3 justify-start">
-                <div className="w-8 h-8 bg-blue-100 rounded-full flex items-center justify-center">
-                  <Bot className="w-4 h-4 text-blue-600" />
-                </div>
-                <div className="bg-gray-100 px-4 py-3 rounded-lg">
-                  <div className="flex gap-1">
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce"></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.1s' }}></div>
-                    <div className="w-2 h-2 bg-gray-400 rounded-full animate-bounce" style={{ animationDelay: '0.2s' }}></div>
-                  </div>
-                </div>
-              </div>
-            )}
-          </div>
+          <MessageDisplay messages={messages} isTyping={isTyping} />
 
           {/* Input */}
           <div className="flex gap-2">
